@@ -1,7 +1,7 @@
 from PIL import Image
 
 
- countries = []
+ allTerritories = []
  numTerritories = 0
  print("Hello world")
 
@@ -21,23 +21,23 @@ def gameInit():
         data = line.split("-")
         adjacentCountries = data[1].split(", ") #TODO: See if the brackets [] in riskdata.txt cause any problems with loading in these names
         pickTerritories(dice.roll("1d4"))
-        countries.append(country)
+        allTerritories.append(country)
 
 #Each country will start out with a random army count of 1-6
 def playerOnePick():
-    country = Country(data[0], dice.getRoll("1d6"), adjacentCountries, p1) 
+    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p1) 
 
 def playerTwoPick():
-    country = Country(data[0], dice.getRoll("1d6"), adjacentCountries, p2)
+    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p2)
 
 def playerThreePick():
-    country = Country(data[0], dice.getRoll("1d6"), adjacentCountries, p3)
+    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p3)
 
 def playerFourPick():
-    country = Country(data[0], dice.getRoll("1d6"), adjacentCountries, p4)
+    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p4)
 
 def pickTerritories(roll): 
-   # for line in data:
+    for line in data:
         switcher = {
             1: playerOnePick,
             2: playerTwoPick,
