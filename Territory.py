@@ -22,7 +22,7 @@ class Country:
 def getVulnerabilityRating():
     rating = 0
     for territory in connections:
-        if territory.getPower != self.getPower():
+        if territory.getPower != self.getPower(): # find countries played by hostile powers
             rating += territory.getUnits()
     rating = (rating/self.getUnits())/10 #ratio of other players units vs this countries' units/10
     return rating
@@ -49,6 +49,14 @@ def getPower(self):
 
 def getConnections(self):
     return self.connections
+
+def getHostileConnections():
+    hostileConnections = []
+    for territory in connections:
+        if(territory.getPower != self.getPower):
+            hostileConnections.append(territory)
+
+    return hostileConnections
 
 def setUnits(self, newUnits):
     self.units = newUnits
