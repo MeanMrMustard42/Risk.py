@@ -8,6 +8,7 @@ gameIsRunning = False
 reinforcing = False
 attacking = False
 fortifying = False
+IsOnTurn = False
 
 extraArmies = 0
 numControlledTerritories = 0
@@ -17,8 +18,10 @@ dice = DiceRoller()
 #def __init__():
 # we might not need this
 
-def reinforce(): #reinforce most vulnerable territory
+#reinforce most vulnerable territory
+def reinforce(): 
     reinforcing = True
+    isOnTurn = True
     extraArmies = numControlledTerritories/3
     highestRating = 0
     for territory in territories:
@@ -28,10 +31,6 @@ def reinforce(): #reinforce most vulnerable territory
 territory.setUnits(territory.getUnits() + extraArmies) # putting all the armies into the most vulnerable one for now
         
 
-
-# find country w/ lowest vulnerability rating that is surrounded by at least one hostile country.
-# A country with a low vulnerability rating yet is surrounded by a hostile country means that the country
-# is more likely to have more available armies to use, rather than just being surrounded by friendly countries.
 
 """ 
 the idea here is to find the controlled territory w/ lowest rating (but still surrounded by at least one hostile territory) and then, from
@@ -69,8 +68,55 @@ def attack():
             print(attacker.getPower + "cannot continue the attack from" + attacker.getName() +", 1 army left")
             break
 
-#fortify the territory with the highest vulnerability rating   
+#fortify the territory with the highest vulnerability rating
 
+
+# for use in fortify()
+def moveArmies(amount, territory, otherTerritory):
+    if(territory.isConnected(otherTerritory)):
+        territory.setUnits(territory.getUnits() - amount)
+        otherTerritory.setUnits(otherTerritory.getUnits() + amount)
+    else:
+        print(territory.getName() + " and " + otherTerritory.getName() + " arent connected, whoops")
+  
+
+
+# find connection with highest number of armies and give a proportional amount
 def fortify():
-    mostVulnerable = Territory():
+    mostVulnerable = Territory()
+    highestVulRating = 10
+    for territory in controlledTerritories:
+        if(territory.getVulnerabilityRating() > highestVulRating):
+            highestVulRating = territory.getVulnerabilityRating()
+            mostVulnerable = territory
+
+    mostArmies = 1 
+    donatingTerritory = Territory()
+    for connection in territory.getConnections:
+        if(isTerritoryFriendly(connection) and connection.getUnits >= mostArmies):
+            mostArmies = connection.getUnits()
+            donatingTerritory = connection
     
+    if(donatingTerritory.getUnits() > 1):
+        if(donatingTerritory.getUnits() > 9): # Neither territory should have an army count below 1
+            moveArmies(5, donatingTerritory, mostVulnerable)
+        elif(donatingTerritory.getUnits() > 6):
+            moveArmies(3, donatingTerritory, mostVulnerable)
+        elif(donatingTerritory.getUnits() > 3):
+            moveArmies(2, donatingTerritory, mostVulnerable)
+        else:
+            moveArmies(1, donatingTerritory, mostVulnerable)
+
+    isOnTurn = False
+    
+        
+
+
+    
+
+
+
+
+    
+
+

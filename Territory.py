@@ -64,6 +64,14 @@ def setUnits(self, newUnits):
 def setPower(self, newPower):
     self.occupyingPower = newPower
 
+def isTerritoryFriendly(otherCountry):
+    return otherCountry.getPower == self.getPower
+
+def isConnected(otherTerritory):
+    for territory in connections:
+        if(territory.getName == self.getName()):
+            return True
+    return False
 
 
 
