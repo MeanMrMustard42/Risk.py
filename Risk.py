@@ -3,6 +3,7 @@ from PIL import Image
 
  allTerritories = []
  numTerritories = 0
+ gameIsRunning = False
  print("Hello world")
 
 dice = DiceRoller()
@@ -10,6 +11,8 @@ p1 = Player()
 p2 = Player()
 p3 = Player()
 p4 = Player()
+
+players = [p1, p2, p3, p4] # Might be interesting to support a dynamic amount of players later
  
 board = Image.open(r"C:\Users\steve\Desktop\risk.jpg")
 data = open('riskdata.txt,' 'r')
@@ -45,6 +48,26 @@ def pickTerritories(roll):
             4: playerFourPick
         }
         switcher.get(roll, "Only four players allowed right now")
+
+
+def play():
+    gameInit()
+    pickTerritories()
+
+    while(gameIsRunning):
+        for player in players:
+            player.reinforce()
+            player.attack()
+            player.fortify()
+            if(player.hasWon):
+                print("Player " + player.getName())
+                
+
+
+
+            
+
+
 
 
 
