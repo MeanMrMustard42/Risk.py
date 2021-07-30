@@ -1,10 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import copy
 
 class Player:
 
-    import copy
 
 
 reinforcing = False
@@ -13,6 +12,8 @@ fortifying = False
 IsOnTurn = False
 isDefeated = False
 hasWon = False
+f = open("game.txt", "w")
+
 
 playerNumber = 0
 

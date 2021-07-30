@@ -1,10 +1,13 @@
 from PIL import Image
+from DiceRoller import DiceRoller
+from Player import Player
 
 
- allTerritories = []
- numTerritories = 0
- gameIsRunning = False
- print("Hello world")
+allTerritories = []
+numTerritories = 0
+gameIsRunning = False
+print("Hello world")
+f = open("game.txt", "w")
 
 dice = DiceRoller()
 p1 = Player()
@@ -53,6 +56,8 @@ def pickTerritories(roll):
 def play():
     gameInit()
     pickTerritories()
+    gameIsRunning = True   
+
 
     while(gameIsRunning):
         for player in players:
@@ -60,8 +65,12 @@ def play():
             player.attack()
             player.fortify()
             if(player.hasWon):
-                print("Player " + player.getName())
-                
+                print("Player " + player.getName() + " has won!")
+                gameIsRunning = False
+        
+def main():
+    print("what the fUCK is this running")
+
 
 
 
