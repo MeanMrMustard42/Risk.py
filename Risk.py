@@ -1,13 +1,15 @@
-from PIL import Image
+#from PIL import Image
 from DiceRoller import DiceRoller
 from Player import Player
+from Territory import Territory
 
 
 allTerritories = []
+adjacentCountries = []
 numTerritories = 0
 gameIsRunning = False
 print("Hello world")
-f = open("game.txt", "w")
+#f = open("game.txt", "w")
 
 dice = DiceRoller()
 p1 = Player()
@@ -17,33 +19,40 @@ p4 = Player()
 
 players = [p1, p2, p3, p4] # Might be interesting to support a dynamic amount of players later
  
-board = Image.open(r"C:\Users\steve\Desktop\risk.jpg")
-data = open('riskdata.txt,' 'r')
+#board = Image.open(r"C:\Users\steve\Desktop\risk.jpg")
+with open('riskdata.txt') as f:
+    data = f.readlines()
 
-board.show()
+#board.show()
 
-def gameInit():
-        numTerritories += 1
-        data = line.split("-")
-        adjacentCountries = data[1].split(", ") #TODO: See if the brackets [] in riskdata.txt cause any problems with loading in these names
-        pickTerritories(dice.roll("1d4"))
-        allTerritories.append(country)
 
 #Each country will start out with a random army count of 1-6
 def playerOnePick():
+    global adjacentCountries
     country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p1) 
 
 def playerTwoPick():
+    global adjacentCountries
     country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p2)
 
 def playerThreePick():
+    global adjacentCountries
     country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p3)
 
 def playerFourPick():
+    global adjacentCountries
     country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p4)
 
-def pickTerritories(roll): 
+def pickTerritories(roll):
+    global numTerritories
+    global data
+    global allTerritories
+
     for line in data:
+        temp = data[line].split("-")     
+        numTerritories += 1
+        adjacentCountries = data[line].split(", ") #TODO: See if the brackets [] in riskdata.txt cause any problems with loading in these names
+
         switcher = {
             1: playerOnePick,
             2: playerTwoPick,
@@ -54,7 +63,6 @@ def pickTerritories(roll):
 
 
 def play():
-    gameInit()
     pickTerritories()
     gameIsRunning = True   
 
