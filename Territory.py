@@ -9,11 +9,6 @@ class Territory:
     from DiceRoller import DiceRoller
     occupyingPower = Player()
 
-
-
-
-
-
     def __init__(self,name, units, connections, occupyingPower):
         self.name =  name
         self.units = units
@@ -76,7 +71,7 @@ class Territory:
     def setPower(self, newPower):
         self.occupyingPower = newPower
 
-    def isTerritoryFriendly(self, otherCountry):
+    def isTerritoryFriendly(self, otherCountry): # returns if this country is owned by the same player as the invoked one
         return otherCountry.getPower == self.getPower
 
     def isConnected(self, otherTerritory):
