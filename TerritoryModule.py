@@ -2,12 +2,14 @@
 #from DiceRoller import DiceRoller
 import copy
 
+connections = []
+
 class Territory:
 
     isGeneric = False
 
     def __init__(self, name, units, connections, occupyingPower):
-        import PlayerModule
+        import PlayerModule        
         self.name =  name
         self.units = units
         self.connections = connections
@@ -24,9 +26,8 @@ class Territory:
 
     #TODO: See if adding friendly surrounding units to the equation produces a more comprehensive rating
     def getVulnerabilityRating(self):
-        
         rating = 0
-        global connections 
+        global connections
 
         for territory in connections:
             if territory.getPower != self.getPower(): # find countries played by hostile powers
@@ -61,6 +62,7 @@ class Territory:
         return self.connections
 
     def getHostileConnections(self):
+        global connections
         hostileConnections = []
         for territory in connections:
             if(territory.getPower != self.getPower):

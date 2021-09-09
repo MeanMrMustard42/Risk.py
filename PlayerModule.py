@@ -28,7 +28,7 @@ class Player:
 
     playerNumber = 0
 
-    def __init__():
+    def __init__(self):
         attacker = TerritoryModule.Territory("placeholder", 1, [], placeholder)  # will hopefully have a very low vul rating
         defender = TerritoryModule.Territory("placeholder", 1, [], placeholder)  
 
