@@ -1,30 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from DiceRoller import DiceRoller
+import DiceRoller
 
+placeholder = None # placeholder for a placeholder
+attacker = None
+defender = None
 
 extraArmies = 0
 numControlledTerritories = 0 # not sure how this will work as it's not within the scope of the class..but I guess I'll find out lmao
 controlledTerritories = []
 
 import copy
-#from Player import Player
-from Territory import Territory
-from DiceRoller import DiceRoller
-dice = DiceRoller()
-
-attacker = Territory()  # will hopefully have a very low vul rating
-defender = Territory()
-
+import TerritoryModule
+dice = DiceRoller.Dice()
 
 
 class Player:
-
-
-
-
-
     reinforcing = False
     attacking = False
     fortifying = False
@@ -37,7 +29,10 @@ class Player:
     playerNumber = 0
 
     def __init__():
-        pass
+        attacker = TerritoryModule.Territory("placeholder", 1, [], placeholder)  # will hopefully have a very low vul rating
+        defender = TerritoryModule.Territory("placeholder", 1, [], placeholder)  
+
+
 
  # reinforce most vulnerable territory
 
@@ -120,7 +115,7 @@ class Player:
     # find connection with highest number of armies and give a proportional amount
 
     def fortify(self):
-        mostVulnerable = Territory()
+        mostVulnerable = TerritoryModule.Territory()
         highestVulRating = 10
         for territory in controlledTerritories:
             if territory.getVulnerabilityRating() > highestVulRating:
@@ -128,7 +123,7 @@ class Player:
                 mostVulnerable = territory # deep copy?
 
         mostArmies = 1
-        donatingTerritory = Territory()
+        donatingTerritory = TerritoryModule.Territory()
         for connection in territory.getConnections:
             if (mostVulnerable.isTerritoryFriendly(connection) and connection.getUnits \
                 >= mostArmies):

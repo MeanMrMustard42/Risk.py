@@ -1,19 +1,22 @@
 
-connections = []
-name = "yermum"
-units = 0
+#from DiceRoller import DiceRoller
+import copy
 
 class Territory:
-    import copy
-    from Player import Player
-    from DiceRoller import DiceRoller
-    occupyingPower = Player()
 
-    def __init__(self,name, units, connections, occupyingPower):
+    isGeneric = False
+
+    def __init__(self, name, units, connections, occupyingPower):
+        import PlayerModule
         self.name =  name
         self.units = units
         self.connections = connections
         self.occupyingPower = occupyingPower
+        if (occupyingPower is None): # if occupyingPower is null, don't try to make it a Player object
+            isGeneric = True
+        else:
+            occupyingPower = PlayerModule.Player()
+
 
 
     # returns num of (surrounding hostile units/friendly units)/10. A higher rating means the territory is in more danger of being taken 

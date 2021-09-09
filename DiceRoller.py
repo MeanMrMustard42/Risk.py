@@ -2,7 +2,7 @@ import requests
 import re
 
 
-class DiceRoller:
+class Dice:
     positiveMod = True
 
 def getRoll(roll):

@@ -1,7 +1,7 @@
 #from PIL import Image
-from DiceRoller import DiceRoller
-from Player import Player
-from Territory import Territory
+import DiceRoller
+import PlayerModule
+import TerritoryModule
 
 
 allTerritories = []
@@ -11,11 +11,11 @@ gameIsRunning = False
 print("Hello world")
 #f = open("game.txt", "w")
 
-dice = DiceRoller()
-p1 = Player()
-p2 = Player()
-p3 = Player()
-p4 = Player()
+dice = DiceRoller.Dice()
+p1 = PlayerModule.Player()
+p2 = PlayerModule.Player()
+p3 = PlayerModule.Player()
+p4 = PlayerModule.Player()
 
 players = [p1, p2, p3, p4] # Might be interesting to support a dynamic amount of players later
  
@@ -29,19 +29,19 @@ with open('riskdata.txt') as f:
 #Each country will start out with a random army count of 1-6
 def playerOnePick():
     global adjacentCountries
-    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p1) 
+    country = TerritoryModule.Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p1) 
 
 def playerTwoPick():
     global adjacentCountries
-    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p2)
+    country = TerritoryModule.Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p2)
 
 def playerThreePick():
     global adjacentCountries
-    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p3)
+    country = TerritoryModule.Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p3)
 
 def playerFourPick():
     global adjacentCountries
-    country = Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p4)
+    country = TerritoryModule.Territory(data[0], dice.getRoll("1d6"), adjacentCountries, p4)
 
 def pickTerritories(roll):
     global numTerritories
