@@ -44,7 +44,7 @@ class Player:
         global numControlledTerritories
         numControlledTerritories = newAmount
 
-    def reinforce():
+    def reinforce(self):
         import copy 
 
         reinforcing = True
@@ -60,7 +60,7 @@ class Player:
         territory.setUnits(territory.getUnits() + extraArmies)  # putting all the armies into the most vulnerable one for now
 
 
-    def attack():
+    def attack(self):
         lowestRating = 100
         global attacker
         global defender
