@@ -46,6 +46,7 @@ class Player:
 
     def reinforce(self):
         import copy
+        territory = TerritoryModule.Territory("dummy", 0, [], None)
 
         reinforcing = True
         isOnTurn = True
