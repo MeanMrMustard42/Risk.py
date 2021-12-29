@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import DiceRoller
+import TerritoryModule
 
 placeholder = None  # placeholder for a placeholder
-attacker = None
-defender = None
+territory = TerritoryModule.Territory('placeholder', 1, [],
+                placeholder)
+attacker = TerritoryModule.Territory('placeholder', 1, [],
+                placeholder)
+defender = TerritoryModule.Territory('placeholder', 1, [],
+                placeholder)
 
 extraArmies = 0
 numControlledTerritories = 0  # not sure how this will work as it's not within the scope of the class..but I guess I'll find out lmao
@@ -46,7 +51,7 @@ class Player:
 
     def reinforce(self):
         import copy
-        territory = TerritoryModule.Territory("dummy", 0, [], None)
+       # territory = TerritoryModule.Territory("dummy", 0, [], None)
 
         reinforcing = True
         isOnTurn = True
@@ -56,13 +61,13 @@ class Player:
             if territory.getVulnerabilityRating() > lowestRating:
                 mostVulnerable = copy.copy(territory)  # We might not actually need this either but keep it for now
                 lowestRating = territory.getVulnerabilityRating()
-
-        territory.setUnits(territory.getUnits() + extraArmies)  # putting all the armies into the most vulnerable one for now
+                territory.setUnits(territory.getUnits() + extraArmies)  # putting all the armies into the most vulnerable one for now
 
     def attack(self):
         lowestRating = 100
         global attacker
         global defender
+        #global territory
 
         for invader in controlledTerritories:
             if invader.getVulnerabilityRating < lowestRating \
@@ -72,7 +77,7 @@ class Player:
 
         highestRating = 10
 
-        for territory in attacker.getHostileConnections:
+        for territory in attacker.getHostileConnections():
             if territory.getVulnerabilityRating > highestRating:  # doing same thing here, trying to find hostile country w/ highest rating
                 defender = territory
 
@@ -112,21 +117,28 @@ class Player:
 
     # find connection with highest number of armies and give a proportional amount
 
-    def fortify(self):
-        mostVulnerable = TerritoryModule.Territory()
-        highestVulRating = 10
-        for territory in controlledTerritories:
+
+    def getMVT(self): # Most Vulnerable Territory, for use in fortify
+         mostVulnerable = TerritoryModule.Territory('placeholder', 1, [], placeholder)
+         highestVulRating = 10
+         for territory in controlledTerritories: # find most vulnerable territory
             if territory.getVulnerabilityRating() > highestVulRating:
                 highestVulRating = territory.getVulnerabilityRating()
                 mostVulnerable = territory  # deep copy?
 
+         return mostVulnerable
+
+    def fortify(self):
         mostArmies = 1
-        donatingTerritory = TerritoryModule.Territory()
-        for connection in territory.getConnections:
-            if mostVulnerable.isTerritoryFriendly(connection) \
-                and connection.getUnits >= mostArmies:
+        donatingTerritory = TerritoryModule.Territory('placeholder', 1, [],
+                placeholder) #TODO: what to do about placeholders (if anything lol)?
+
+        MVT = self.getMVT()
+
+        for connection in MVT.getConnections(): # find territory to donate
+            if MVT.isTerritoryFriendly(connection) and connection.getUnits >= mostArmies:
                 mostArmies = connection.getUnits()
-                donatingTerritory = connection
+                donatingTerritory = connection # again, deep copy?
 
         if donatingTerritory.getUnits() > 1:
             if donatingTerritory.getUnits() > 9:  # Neither territory should have an army count below 1
