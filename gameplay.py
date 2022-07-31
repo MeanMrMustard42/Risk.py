@@ -14,10 +14,10 @@ gameIsRunning = False
 # f = open("game.txt", "w")
 
 dice = DiceRoller.Dice()
-p1 = PlayerModule.Player()
-p2 = PlayerModule.Player()
-p3 = PlayerModule.Player()
-p4 = PlayerModule.Player()
+p1 = PlayerModule.Player("John")
+p2 = PlayerModule.Player("Paul")
+p3 = PlayerModule.Player("George")
+p4 = PlayerModule.Player("Ringo")
 
 players = [p1, p2, p3, p4]  # Might be interesting to support a dynamic amount of players later
 
@@ -30,32 +30,42 @@ with open('riskdata.txt') as f:
 # board.show()
 
 # Each country will start out with a random army count of 1-6
+# TODO: Each territory in the territory's connection list should be Territory objects, not strings
 
-def playerOnePick():
+
+def playerOnePick(territoryInfo, connections):
     global adjacentCountries
-    country = TerritoryModule.Territory(data[0],
-            dice.getNativeRoll('1d6'), adjacentCountries, p1)
+
+    country = TerritoryModule.Territory(territoryInfo[0],
+            dice.getNativeRoll('1d6'), connections, p1)
+    p1.addNewTerritory(country)
 
 
-def playerTwoPick():
+def playerTwoPick(territoryInfo, connections):
     global adjacentCountries
-    country = TerritoryModule.Territory(data[0],
-            dice.getNativeRoll('1d6'), adjacentCountries, p2)
+    country = TerritoryModule.Territory(territoryInfo[0],
+            dice.getNativeRoll('1d6'), connections, p2)
+    p2.addNewTerritory(country)
 
 
-def playerThreePick():
+
+def playerThreePick(territoryInfo, connections):
     global adjacentCountries
-    country = TerritoryModule.Territory(data[0],
-            dice.getNativeRoll('1d6'), adjacentCountries, p3)
+    country = TerritoryModule.Territory(territoryInfo[0],
+            dice.getNativeRoll('1d6'), connections, p3)
+    p3.addNewTerritory(country)
 
 
-def playerFourPick():
+
+def playerFourPick(territoryInfo, connections):
     global adjacentCountries
-    country = TerritoryModule.Territory(data[0],
-            dice.getNativeRoll('1d6'), adjacentCountries, p4)
+    country = TerritoryModule.Territory(territoryInfo[0],
+            dice.getNativeRoll('1d6'), connections, p4)
+    p4.addNewTerritory(country)
 
 
-def pickTerritories():  #
+
+def pickTerritories(): 
     global numTerritories
     global data
     global allTerritories
@@ -67,18 +77,18 @@ def pickTerritories():  #
             index += 1
             continue
 
-        temp = data[index].split('-')
+        territoryData = data[index].split('-')
+        territoryConnections = territoryData[1].split(", ")
         numTerritories += 1
-        adjacentCountries = data[index].split(', ')  # TODO: See if the brackets [] in riskdata.txt cause any problems with loading in these names
         roll = dice.getNativeRoll('1d4')
-
-        switcher = {  # TODO - Switcher might not work for this, it seems like it's executing all 4 picking methods?
-            1: playerOnePick(),
-            2: playerTwoPick(),
-            3: playerThreePick(),
-            4: playerFourPick(),
-            }
-        switcher.get(roll, 'Only four players allowed right now')
+        if roll == 1:
+            playerOnePick(territoryData, territoryConnections)
+        elif roll == 2:
+            playerTwoPick(territoryData, territoryConnections)
+        elif roll == 3:
+            playerThreePick(territoryData, territoryConnections)
+        elif roll == 4:
+            playerFourPick(territoryData, territoryConnections)
         index += 1
 
 
@@ -91,7 +101,8 @@ def play():
             player.reinforce()
             player.attack()
             player.fortify()
-            if player.hasWon:
+            print(player.getName() + " has won " + str(player.getTerritoriesNum()) + " territories, out of " + str(numTerritories) + " in total")
+            if player.hasWon(numTerritories):
                 print('Player ' + player.getName() + ' has won!')
                 gameIsRunning = False
 

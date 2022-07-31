@@ -5,6 +5,7 @@ import re
 import random
 
 
+
 class Dice:
 
     positiveMod = False

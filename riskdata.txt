@@ -1,56 +1,56 @@
 North America:
 
-Alaska - [Northwest Territory, Alberta, Kamchatla]
-NW Territory - [Alaska, Alberta, Ontario, Greenland]
-Alberta - [Alaska, NW Terriory, Ontario, Western US]
-Ontario - [Alberta, NW Territory, Quebec, Western US, Eastern US]
-Greenland - [NW Territory, Ontario, Quebec, Iceland]
-Quebec - [Ontario, Greenland, Eastern US]
-Western US - [Alberta, Ontario, Eastern US, Central America]
-Eastern US - [Western US, Ontario, Quebec, Central America]
-Central America - [Western US, Eastern US, Venezuela]
+Alaska - Northwest Territory, Alberta, Kamchatla
+NW Territory - Alaska, Alberta, Ontario, Greenland
+Alberta - Alaska, NW Terriory, Ontario, Western US
+Ontario - Alberta, NW Territory, Quebec, Western US, Eastern US
+Greenland - NW Territory, Ontario, Quebec, Iceland
+Quebec - Ontario, Greenland, Eastern US
+Western US - Alberta, Ontario, Eastern US, Central America
+Eastern US - Western US, Ontario, Quebec, Central America]
+Central America - Western US, Eastern US, Venezuela
 
 South America:
-Venezuela - [Central America, Peru, Brazil]
-Peru - [Venezuela, Brazil, Argentina]
-Brazil - [Venezuela, Peru, Argentina, North Africa]
-Argentina - [Peru, Brazil]
+Venezuela - Central America, Peru, Brazil
+Peru - Venezuela, Brazil, Argentina
+Brazil - Venezuela, Peru, Argentina, North Africa
+Argentina - Peru, Brazil
 
 Europe:
-Iceland - [Greenland, Great Britain, Scandinavia]
-Great Britain - [Iceland, Scandinavia, Northern EU, Western EU]
-Western EU - [Great Britain, Northern EU, Southern EU, North Africa]
-Northern EU - [Great Britain, Western EU, Scandinavia, Southern EU, Ukraine]
-Southern EU - [Western EU, Northern EU, Ukraine, North Africa, Mid East, Egypt]
-Ukraine - [Scandinavia, Northern EU, Southern EU, Mid East, Ural, Afghanistan]
-Scandinavia - [Iceland, Great Britain, Northern EU, Ukraine]
+Iceland - Greenland, Great Britain, Scandinavia
+Great Britain - Iceland, Scandinavia, Northern EU, Western EU
+Western EU - Great Britain, Northern EU, Southern EU, North Africa
+Northern EU - Great Britain, Western EU, Scandinavia, Southern EU, Ukraine
+Southern EU - Western EU, Northern EU, Ukraine, North Africa, Mid East, Egypt
+Ukraine - Scandinavia, Northern EU, Southern EU, Mid East, Ural, Afghanistan
+Scandinavia - Iceland, Great Britain, Northern EU, Ukraine
 
 Africa:
-North Africa - [Egypt, East Africa, Congo, Southern EU, Brazil]
-Egypt - [North Africa, East Africa, Middle East, Southern EU]
-East Africa - [Congo, South Africa, Egypt, North Africa, Madagascar, Mid East]
-Congo - [North Africa, East Africa, South Africa]
-South Africa - [Congo, East Africa, Madagascar]
-Madagascar - [South Africa, East Africa]
+North Africa - Egypt, East Africa, Congo, Southern EU, Brazil
+Egypt - North Africa, East Africa, Middle East, Southern EU
+East Africa - Congo, South Africa, Egypt, North Africa, Madagascar, Mid East
+Congo - North Africa, East Africa, South Africa
+South Africa - Congo, East Africa, Madagascar
+Madagascar - South Africa, East Africa
 
 Asia:
-Ural - [Ukraine, Afghanistan, Siberia, China]
-Afghanistan - [Ural, Mid East, India, China]
-Middle East - [Egypt, Southern EU, Ukraine, East Africa, Afghanistan, India]
-India - [Afghanistan, China, Mid East, Siam]
-Siam - [India, China, Indonesia]
-China - [India, Siam, Afghanistan, Ural, Siberia, Mongolia]
-Mongolia - [Japan, Irkutsk, China, Kamchatla]
-Japan - [Mongolia, Kamchatla]
-Irkutsk - [Yakutsk, Kamchatla, Mongolia, Siberia]
-Yakutsk - [Irkutsk, Kamchatla, Siberia]
-Siberia - [Ural, Yakutsk, Irkutsk, Mongolia, China]
-Kamchatla - [Yakutsk, Irkutsk, Mongolia, Japan, Alaska]
+Ural - Ukraine, Afghanistan, Siberia, China
+Afghanistan - Ural, Mid East, India, China
+Middle East - Egypt, Southern EU, Ukraine, East Africa, Afghanistan, India
+India - Afghanistan, China, Mid East, Siam
+Siam - India, China, Indonesia
+China - India, Siam, Afghanistan, Ural, Siberia, Mongolia
+Mongolia - Japan, Irkutsk, China, Kamchatla
+Japan - Mongolia, Kamchatla
+Irkutsk - Yakutsk, Kamchatla, Mongolia, Siberia
+Yakutsk - Irkutsk, Kamchatla, Siberia
+Siberia - Ural, Yakutsk, Irkutsk, Mongolia, China
+Kamchatla - Yakutsk, Irkutsk, Mongolia, Japan, Alaska
 
 Oceania:
-Indonesia - [Siam, New Guinea, Western Aus]
-New Guinea - [Indonesia, Western Aus, Eastern Aus, New Zealand]
-Western Aus - [Eastern Aus, Indonesia]
-Eastern Aus - [Western Aus, New Guinea, New Zealand]
-New Zealand - [Eastern Aus, New Guinea]
+Indonesia - Siam, New Guinea, Western Aus
+New Guinea - Indonesia, Western Aus, Eastern Aus, New Zealand
+Western Aus - Eastern Aus, Indonesia
+Eastern Aus - Western Aus, New Guinea, New Zealand
+New Zealand - Eastern Aus, New Guinea
 
