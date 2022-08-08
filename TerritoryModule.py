@@ -62,6 +62,9 @@ class Territory:
 
     def getConnections(self):
         return self.connections
+    
+    def changeConnection(self, index, newConnection):
+        self.connections[index] = newConnection
 
     def getHostileConnections(self):
         global connections

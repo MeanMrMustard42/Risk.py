@@ -19,6 +19,8 @@ p2 = PlayerModule.Player("Paul")
 p3 = PlayerModule.Player("George")
 p4 = PlayerModule.Player("Ringo")
 
+dummy = PlayerModule.Player("TBD")
+
 players = [p1, p2, p3, p4]  # Might be interesting to support a dynamic amount of players later
 
 # board = Image.open(r"C:\Users\steve\Desktop\risk.jpg")
@@ -33,39 +35,55 @@ with open('riskdata.txt') as f:
 # TODO: Each territory in the territory's connection list should be Territory objects, not strings
 
 
-def playerOnePick(territoryInfo, connections):
-    global adjacentCountries
-
-    country = TerritoryModule.Territory(territoryInfo[0],
-            dice.getNativeRoll('1d6'), connections, p1)
-    p1.addNewTerritory(country)
 
 
-def playerTwoPick(territoryInfo, connections):
-    global adjacentCountries
-    country = TerritoryModule.Territory(territoryInfo[0],
-            dice.getNativeRoll('1d6'), connections, p2)
-    p2.addNewTerritory(country)
+def playerOnePick(territory):
+    territory.setUnits(dice.getNativeRoll('1d6'))
+    p1.addNewTerritory(territory)
+
+
+def playerTwoPick(territory):
+    territory.setUnits(dice.getNativeRoll('1d6'))
+    p2.addNewTerritory(territory)
 
 
 
-def playerThreePick(territoryInfo, connections):
-    global adjacentCountries
-    country = TerritoryModule.Territory(territoryInfo[0],
-            dice.getNativeRoll('1d6'), connections, p3)
-    p3.addNewTerritory(country)
+def playerThreePick(territory):
+    territory.setUnits(dice.getNativeRoll('1d6'))
+    p3.addNewTerritory(territory)
 
 
 
-def playerFourPick(territoryInfo, connections):
-    global adjacentCountries
-    country = TerritoryModule.Territory(territoryInfo[0],
-            dice.getNativeRoll('1d6'), connections, p4)
-    p4.addNewTerritory(country)
+def playerFourPick(territory):
+    territory.setUnits(dice.getNativeRoll('1d6'))
+    p4.addNewTerritory(territory)
+
+
+# linear search :')) should return a Territory object
+def getTerritory(name):
+    for territory in allTerritories:
+        if territory.getName() == name:
+            return territory
+    print(name + " couldn't find " )
+    return "fuck"
+
+    
+
+# allTerritories should be full when this is called
+def connectTerritories():
+    global allTerritories
+    for territory in allTerritories:
+        index = 0
+        for connection in territory.getConnections():
+            territory.changeConnection(index, getTerritory(connection))
+            index +=1
+            print(connection)
 
 
 
-def pickTerritories(): 
+
+
+def createTerritories(): 
     global numTerritories
     global data
     global allTerritories
@@ -77,23 +95,40 @@ def pickTerritories():
             index += 1
             continue
 
-        territoryData = data[index].split('-')
-        territoryConnections = territoryData[1].split(", ")
+
         numTerritories += 1
+        territoryData = data[index].split(' - ')
+
+        # preprocessing
+        territoryData[0] = territoryData[0].strip()
+        territoryData[0] = territoryData[0].replace('\n', '')
+
+        territoryData[1] = territoryData[1].strip()
+        territoryData[1] = territoryData[1].replace('\n', '')
+
+        territoryConnections = territoryData[1].split(", ")
+        allTerritories.append(TerritoryModule.Territory(territoryData[0], 0, territoryConnections, dummy))
+        index += 1
+    connectTerritories()
+    pickTerritories()
+
+
+def pickTerritories():
+    for territory in allTerritories:
         roll = dice.getNativeRoll('1d4')
         if roll == 1:
-            playerOnePick(territoryData, territoryConnections)
+            playerOnePick(territory)
         elif roll == 2:
-            playerTwoPick(territoryData, territoryConnections)
+            playerTwoPick(territory)
         elif roll == 3:
-            playerThreePick(territoryData, territoryConnections)
+            playerThreePick(territory)
         elif roll == 4:
-            playerFourPick(territoryData, territoryConnections)
-        index += 1
+            playerFourPick(territory)
 
 
+# TODO: why aren't the Beatles taking territories from each other :((
 def play():
-    pickTerritories()
+    createTerritories()
     gameIsRunning = True
 
     while gameIsRunning:

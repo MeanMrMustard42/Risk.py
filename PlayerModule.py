@@ -38,6 +38,7 @@ class Player:
     def addNewTerritory(self, newTerritory):
         self.controlledTerritories.append(newTerritory)
         self.numControlledTerritories += 1
+        newTerritory.setPower(self)
         print("added new territory " + newTerritory.getName() + " to " + self.getName())
 
 
@@ -59,7 +60,7 @@ class Player:
 
         reinforcing = True
         isOnTurn = True
-        extraArmies = self.numControlledTerritories / 3
+        extraArmies = int(self.numControlledTerritories / 3)
 
         highestRating = 0
         lowestRating = -50

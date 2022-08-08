@@ -1,13 +1,12 @@
 North America:
-
-Alaska - Northwest Territory, Alberta, Kamchatla
+Alaska - NW Territory, Alberta, Kamchatla
 NW Territory - Alaska, Alberta, Ontario, Greenland
-Alberta - Alaska, NW Terriory, Ontario, Western US
+Alberta - Alaska, NW Territory, Ontario, Western US
 Ontario - Alberta, NW Territory, Quebec, Western US, Eastern US
 Greenland - NW Territory, Ontario, Quebec, Iceland
 Quebec - Ontario, Greenland, Eastern US
 Western US - Alberta, Ontario, Eastern US, Central America
-Eastern US - Western US, Ontario, Quebec, Central America]
+Eastern US - Western US, Ontario, Quebec, Central America
 Central America - Western US, Eastern US, Venezuela
 
 South America:
