@@ -78,39 +78,41 @@ class Player:
 
         attackingPower = attacker.getPower()
         defendingPower = defender.getPower()
-        #global territory
 
+        # find the ideal invading country - the invader must have more than 1 unit to attack
         for invader in self.controlledTerritories:
             if invader.getVulnerabilityRating() < lowestRating \
-                and not invader.isSafe:  # if the invader's vul rating is less than the lowest rating seen so far and the invader is next to a hostile country
+                and not invader.isSafe and invader.getUnits() > 1:  # if the invader's vul rating is less than the lowest rating seen so far and the invader is next to a hostile country
                 lowestRating = invader.getVulnerabilityRating()
                 attacker = invader  # deep copy?
 
         highestRating = 10
-
         for territory in attacker.getHostileConnections():
-            if territory.getVulnerabilityRating > highestRating:  # doing same thing here, trying to find hostile country w/ highest rating
+            if territory.getVulnerabilityRating() > highestRating:  # doing same thing here, trying to find hostile country w/ highest rating
                 defender = territory
 
         # attack time
-
         for attempts in range(attacker.getUnits()):
             attack = dice.getNativeRoll('1d6')
             defense = dice.getNativeRoll('1d6')
+            print(attacker.getName() + ", controlled by " + attacker.getPower().getName() + ", is attacking " +
+                defender.getName() + ", controlled by " + defender.getPower().getName())
             if defense >= attack:
                 attacker.setUnits(attacker.getUnits() - 1)
             elif attack > defense:
                 defender.setUnits(defender.getUnits() - 1)
 
-            if defender.getUnits == 0:
-                print (attacker.getPower() + ' takes control of ' \
-                    + defender.getName + ' from ' + defender.getPower() \
+            if defender.getUnits() == 0:
+                print(attacker.getPower().getName() + ' takes control of ' \
+                    + defender.getName() + ' from ' + defender.getPower().getName() \
                     + '!')
                 defendingPower.setControlledTerritories(defendingPower.getTerritoriesNum() - 1)
                 defender.setPower(attacker.getPower())
-            elif attacker.getUnits == 1:
-                print (attacker.getPower \
-                    + 'cannot continue the attack from' \
+                defender.setUnits(1)
+                break # breaking out of for loop because territory has been successfully captured
+            elif attacker.getUnits() == 1:
+                print (attacker.getPower().getName() \
+                    + ' cannot continue the attack from ' \
                     + attacker.getName() + ', 1 army left')
                 break
 
@@ -131,7 +133,7 @@ class Player:
     # find the territory with the lowest vul rating BUT borders at least one hostile territory.
     #returns both the attacking territory and the territory that is going to be attacked.
 
-    #TODO: Sus things are goin in the for loop here - if statement never seems to return true
+    #TODO: What is defender? It just returns a placeholder territory
     def getFightingTerritories(self):
         idealAttacker = TerritoryModule.Territory('placeholder', 1, [], self)
         lowestVulRating = 1000
@@ -145,10 +147,9 @@ class Player:
         return idealAttacker, defender
                         
 
-
     def getMVT(self, territoryList): # Most Vulnerable Territory, for use in fortify and attack
          mostVulnerable = TerritoryModule.Territory('placeholder', 1, [], self)
-         highestVulRating = 10
+         highestVulRating = -100
          for territory in territoryList: # find most vulnerable territory
             if territory.getVulnerabilityRating() > highestVulRating:
                 highestVulRating = territory.getVulnerabilityRating()

@@ -12,6 +12,8 @@ class Territory:
 
     isGeneric = False
 
+    #TODO: We only want 4 different player objects, this seems like it might 
+    #create a new player object each time a Territory object is created.
     def __init__(self, name, units, connections, occupyingPower):
         import PlayerModule
         self.name = name
@@ -19,7 +21,7 @@ class Territory:
         self.connections = connections
         self.occupyingPower = occupyingPower
         if occupyingPower is None:  # if occupyingPower is null, don't try to make it a Player object
-            isGeneric = True
+            self.isGeneric = True
         else:
             occupyingPower = PlayerModule.Player()
 
@@ -29,10 +31,11 @@ class Territory:
     # TODO: See if adding friendly surrounding units to the equation produces a more comprehensive rating
 
     def getVulnerabilityRating(self):
-        rating = 0
-        global connections
+        if self.getUnits() == 0:
+            self.setUnits(1)
 
-        for territory in connections:
+        rating = 0
+        for territory in self.connections:
             if territory.getPower != self.getPower():  # find countries played by hostile powers
                 rating += territory.getUnits()
         rating = rating / self.getUnits() / 10  # ratio of other players units vs this countries' units/10
@@ -41,9 +44,7 @@ class Territory:
     # Returns whether or not the country is safe. A country is safe if all surrounding countries are controlled by the player in question
 
     def isSafe(self):
-        global connections
-
-        for territory in connections:
+        for territory in self.connections:
             if territory.getPower != self.getPower:
                 return False
         return True
@@ -69,7 +70,7 @@ class Territory:
     def getHostileConnections(self):
         global connections
         hostileConnections = []
-        for territory in connections:
+        for territory in self.connections:
             if territory.getPower != self.getPower:
                 hostileConnections.append(territory)
 

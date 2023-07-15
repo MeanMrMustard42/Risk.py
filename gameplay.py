@@ -5,6 +5,7 @@
 import DiceRoller
 import PlayerModule
 import TerritoryModule
+import numpy #important for ML stuff later
 
 allTerritories = []
 adjacentCountries = []
@@ -68,8 +69,7 @@ def getTerritory(name):
     return "fuck"
 
     
-
-# allTerritories should be full when this is called
+# Fills in every territory's connections. allTerritories should be full when this is called
 def connectTerritories():
     global allTerritories
     for territory in allTerritories:

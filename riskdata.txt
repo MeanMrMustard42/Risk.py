@@ -20,23 +20,23 @@ Iceland - Greenland, Great Britain, Scandinavia
 Great Britain - Iceland, Scandinavia, Northern EU, Western EU
 Western EU - Great Britain, Northern EU, Southern EU, North Africa
 Northern EU - Great Britain, Western EU, Scandinavia, Southern EU, Ukraine
-Southern EU - Western EU, Northern EU, Ukraine, North Africa, Mid East, Egypt
-Ukraine - Scandinavia, Northern EU, Southern EU, Mid East, Ural, Afghanistan
+Southern EU - Western EU, Northern EU, Ukraine, North Africa, Middle East, Egypt
+Ukraine - Scandinavia, Northern EU, Southern EU, Middle East, Ural, Afghanistan
 Scandinavia - Iceland, Great Britain, Northern EU, Ukraine
 
 Africa:
 North Africa - Egypt, East Africa, Congo, Southern EU, Brazil
 Egypt - North Africa, East Africa, Middle East, Southern EU
-East Africa - Congo, South Africa, Egypt, North Africa, Madagascar, Mid East
+East Africa - Congo, South Africa, Egypt, North Africa, Madagascar, Middle East
 Congo - North Africa, East Africa, South Africa
 South Africa - Congo, East Africa, Madagascar
 Madagascar - South Africa, East Africa
 
 Asia:
 Ural - Ukraine, Afghanistan, Siberia, China
-Afghanistan - Ural, Mid East, India, China
+Afghanistan - Ural, Middle East, India, China
 Middle East - Egypt, Southern EU, Ukraine, East Africa, Afghanistan, India
-India - Afghanistan, China, Mid East, Siam
+India - Afghanistan, China, Middle East, Siam
 Siam - India, China, Indonesia
 China - India, Siam, Afghanistan, Ural, Siberia, Mongolia
 Mongolia - Japan, Irkutsk, China, Kamchatla
