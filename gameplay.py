@@ -79,10 +79,6 @@ def connectTerritories():
             index +=1
             print(connection)
 
-
-
-
-
 def createTerritories(): 
     global numTerritories
     global data
@@ -125,6 +121,11 @@ def pickTerritories():
         elif roll == 4:
             playerFourPick(territory)
 
+def getGameStatus():
+    status = "Current scores: " + p1.getName() + " " + str(p1.getTerritoriesNum()) + " | " + p2.getName() + " " + str(p2.getTerritoriesNum()) + " | " \
+    + p3.getName() + " " + str(p3.getTerritoriesNum()) + " | " + p4.getName() + " " + str(p4.getTerritoriesNum())
+    return status
+
 
 # TODO: why aren't the Beatles taking territories from each other :((
 def play():
@@ -133,13 +134,17 @@ def play():
 
     while gameIsRunning:
         for player in players:
-            player.reinforce()
-            player.attack()
-            player.fortify()
-            print(player.getName() + " has won " + str(player.getTerritoriesNum()) + " territories, out of " + str(numTerritories) + " in total")
+            if not player.isDefeated():
+                player.reinforce()
+                player.attack()
+                print(getGameStatus())
+                player.fortify()
+                
+            #print(player.getName() + " has won " + str(player.getTerritoriesNum()) + " territories, out of " + str(numTerritories) + " in total")
             if player.hasWon(numTerritories):
                 print('Player ' + player.getName() + ' has won!')
                 gameIsRunning = False
+                break
 
 
 def main():

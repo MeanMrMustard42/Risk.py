@@ -12,8 +12,6 @@ class Territory:
 
     isGeneric = False
 
-    #TODO: We only want 4 different player objects, this seems like it might 
-    #create a new player object each time a Territory object is created.
     def __init__(self, name, units, connections, occupyingPower):
         import PlayerModule
         self.name = name
@@ -45,7 +43,7 @@ class Territory:
 
     def isSafe(self):
         for territory in self.connections:
-            if territory.getPower != self.getPower:
+            if territory.getPower() != self.getPower():
                 return False
         return True
 
@@ -71,7 +69,7 @@ class Territory:
         global connections
         hostileConnections = []
         for territory in self.connections:
-            if territory.getPower != self.getPower:
+            if territory.getPower() != self.getPower():
                 hostileConnections.append(territory)
 
         return hostileConnections

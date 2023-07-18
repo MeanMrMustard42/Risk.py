@@ -23,7 +23,6 @@ class Player:
         self.attacking = False
         self.fortifying = False
         self.IsOnTurn = False
-        self.isDefeated = False
         
     
     def getName(self):
@@ -35,17 +34,29 @@ class Player:
     def getControlledTerritoriesList(self):
         return self.controlledTerritories
     
+
+    # adds and removes territories from the controlled territories list, respectively
     def addNewTerritory(self, newTerritory):
         self.controlledTerritories.append(newTerritory)
         self.numControlledTerritories += 1
         newTerritory.setPower(self)
         print("added new territory " + newTerritory.getName() + " to " + self.getName())
 
-
-
+    def removeTerritoryFromList(self, territoryToRemove):
+        self.controlledTerritories.remove(territoryToRemove)
+        self.numControlledTerritories -= 1
+                
     def setControlledTerritories(self, newAmount):
-        numControlledTerritories = newAmount
+        self.numControlledTerritories = newAmount
 
+    # detects if a player has territories and is still in the game
+    def isDefeated(self):
+        if self.numControlledTerritories <= 0:
+            self.numControlledTerritories = 0
+            #print(self.getName() + " is defeated!")
+            return True
+        return False
+    
     # checking if all territories are controlled
     def hasWon(self, territoriesOnField):
         if self.numControlledTerritories >= territoriesOnField:
@@ -70,6 +81,9 @@ class Player:
                 lowestRating = territory.getVulnerabilityRating()
                 territory.setUnits(territory.getUnits() + extraArmies)  # putting all the armies into the most vulnerable one for now
 
+
+    #TODO: When attackingPower == defendingPower, the simulation crashes, this is likely due to getMVT() fuckin up
+    # Also TODO: fix controlled country count issues - may relate to getMVT() issue
     def attack(self):
         lowestRating = 100
         fightingCountries = self.getFightingTerritories()
@@ -78,6 +92,8 @@ class Player:
 
         attackingPower = attacker.getPower()
         defendingPower = defender.getPower()
+        if attackingPower == defendingPower:
+            print("Sadge")
 
         # find the ideal invading country - the invader must have more than 1 unit to attack
         for invader in self.controlledTerritories:
@@ -95,18 +111,21 @@ class Player:
         for attempts in range(attacker.getUnits()):
             attack = dice.getNativeRoll('1d6')
             defense = dice.getNativeRoll('1d6')
-            print(attacker.getName() + ", controlled by " + attacker.getPower().getName() + ", is attacking " +
-                defender.getName() + ", controlled by " + defender.getPower().getName())
+            #print(attacker.getName() + ", controlled by " + attacker.getPower().getName() + ", is attacking " +
+                #defender.getName() + ", controlled by " + defender.getPower().getName())
             if defense >= attack:
                 attacker.setUnits(attacker.getUnits() - 1)
             elif attack > defense:
                 defender.setUnits(defender.getUnits() - 1)
 
-            if defender.getUnits() == 0:
+            if defender.getUnits() <= 0:
                 print(attacker.getPower().getName() + ' takes control of ' \
                     + defender.getName() + ' from ' + defender.getPower().getName() \
                     + '!')
                 defendingPower.setControlledTerritories(defendingPower.getTerritoriesNum() - 1)
+                defendingPower.removeTerritoryFromList(defender)
+
+                attackingPower.addNewTerritory(defender)
                 defender.setPower(attacker.getPower())
                 defender.setUnits(1)
                 break # breaking out of for loop because territory has been successfully captured
@@ -133,7 +152,6 @@ class Player:
     # find the territory with the lowest vul rating BUT borders at least one hostile territory.
     #returns both the attacking territory and the territory that is going to be attacked.
 
-    #TODO: What is defender? It just returns a placeholder territory
     def getFightingTerritories(self):
         idealAttacker = TerritoryModule.Territory('placeholder', 1, [], self)
         lowestVulRating = 1000
@@ -147,6 +165,7 @@ class Player:
         return idealAttacker, defender
                         
 
+    #TODO: Sometimes territoryList is empty, resulting in a placeholder territory being returned
     def getMVT(self, territoryList): # Most Vulnerable Territory, for use in fortify and attack
          mostVulnerable = TerritoryModule.Territory('placeholder', 1, [], self)
          highestVulRating = -100
@@ -154,7 +173,7 @@ class Player:
             if territory.getVulnerabilityRating() > highestVulRating:
                 highestVulRating = territory.getVulnerabilityRating()
                 mostVulnerable = territory  # deep copy?
-
+        
          return mostVulnerable
 
     def fortify(self):
