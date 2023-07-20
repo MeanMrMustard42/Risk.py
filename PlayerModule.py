@@ -7,49 +7,48 @@ import TerritoryModule
 extraArmies = 0
 
 import copy
+import numpy # ML stuff
 import TerritoryModule
 dice = DiceRoller.Dice()
 
 class Player:
     f = open('game.txt', 'w')
-
     playerNumber = 0
 
-    def __init__(self, name = "bob"):
+    def __init__(self, name = "bob"): # bob is placeholder
         self.name = name
-        self.controlledTerritories = []
+        self.controlledTerritories = {}
         self.numControlledTerritories = 0 
         self.reinforcing = False
         self.attacking = False
         self.fortifying = False
         self.IsOnTurn = False
-        
-    
+         
     def getName(self):
         return self.name
 
-    def getTerritoriesNum(self):
+    def updateAndReturnControlledTerritories(self):
+        self.numControlledTerritories = len(self.controlledTerritories)
         return self.numControlledTerritories
 
     def getControlledTerritoriesList(self):
         return self.controlledTerritories
-    
 
     # adds and removes territories from the controlled territories list, respectively
-    def addNewTerritory(self, newTerritory):
-        self.controlledTerritories.append(newTerritory)
-        self.numControlledTerritories += 1
+    def addNewTerritoryToList(self, newTerritory):
+        self.controlledTerritories[newTerritory.getName()] = newTerritory
         newTerritory.setPower(self)
         print("added new territory " + newTerritory.getName() + " to " + self.getName())
+        self.updateAndReturnControlledTerritories()
 
     def removeTerritoryFromList(self, territoryToRemove):
-        self.controlledTerritories.remove(territoryToRemove)
-        self.numControlledTerritories -= 1
+        del self.controlledTerritories[territoryToRemove.getName()]
+        self.updateAndReturnControlledTerritories()
                 
     def setControlledTerritories(self, newAmount):
         self.numControlledTerritories = newAmount
 
-    # detects if a player has territories and is still in the game
+    # detects if a player has territories and is thus still in the game
     def isDefeated(self):
         if self.numControlledTerritories <= 0:
             self.numControlledTerritories = 0
@@ -64,81 +63,85 @@ class Player:
         else:
             return False
 
+    def getFightingTerritories(self):
+        idealAttacker = TerritoryModule.Territory('placeholder', 1, [], self)
+        lowestVulRating = 1000
+        for territory in self.controlledTerritories.values():
+            if territory.getVulnerabilityRating() < lowestVulRating and not territory.isSafe() and territory.getUnits() > 1:
+                lowestVulRating = territory.getVulnerabilityRating()
+                idealAttacker = territory  # deep copy?
+                #print(idealAttacker.getName() + " has connections " + idealAttacker.getConnectionListStr())
+
+        defender = self.getMVT(idealAttacker.getHostileConnections())
+        return idealAttacker, defender
+
+  # The overall most vulnerable territory that is currently controlled by this player
+  # higher rating = more vulnerable as always
+    def getOverallMVT(self):
+        if not self.controlledTerritories:
+            return
+        elif len(self.controlledTerritories) == 1:
+            tempList = list(self.controlledTerritories.values())
+            return tempList[0]
+        else:
+            MVT = TerritoryModule.Territory('placeholder', 1, [], self)
+            highestRating = -100
+            for territory in self.controlledTerritories.values():
+                if territory.getVulnerabilityRating() > highestRating:
+                    MVT = territory # deep copy? maybe
+                    return MVT
+
+    def getMVT(self, territoryList): # Most Vulnerable Territory, for use in fortify and attack
+         mostVulnerable = TerritoryModule.Territory('placeholder', 1, [], self)
+         highestVulRating = -100
+
+         for territory in territoryList.values(): # find most vulnerable territory
+            if territory.getVulnerabilityRating() > highestVulRating:
+                highestVulRating = territory.getVulnerabilityRating()
+                mostVulnerable = territory  # deep copy?
+        
+         return mostVulnerable
+
+
     def reinforce(self):
-        global numControlledTerritories
-        import copy
-       # territory = TerritoryModule.Territory("dummy", 0, [], None)
-
-        reinforcing = True
-        isOnTurn = True
         extraArmies = int(self.numControlledTerritories / 3)
+        self.getOverallMVT().setUnits(self.getOverallMVT().getUnits() + extraArmies)  # putting all the armies into the most vulnerable one for now
 
-        highestRating = 0
-        lowestRating = -50
-        for territory in self.controlledTerritories:
-            if territory.getVulnerabilityRating() > lowestRating:
-                mostVulnerable = copy.copy(territory)  # We might not actually need this either but keep it for now
-                lowestRating = territory.getVulnerabilityRating()
-                territory.setUnits(territory.getUnits() + extraArmies)  # putting all the armies into the most vulnerable one for now
-
-
-    #TODO: When attackingPower == defendingPower, the simulation crashes, this is likely due to getMVT() fuckin up
-    # Also TODO: fix controlled country count issues - may relate to getMVT() issue
     def attack(self):
-        lowestRating = 100
         fightingCountries = self.getFightingTerritories()
         attacker = fightingCountries[0]
         defender = fightingCountries[1]
 
         attackingPower = attacker.getPower()
         defendingPower = defender.getPower()
+
+        if attacker.getUnits() == 1:
+            return # you can't attack if your best territory has only 1 unit left
+
         if attackingPower == defendingPower:
-            print("Sadge")
+            print("Sadge: " + attackingPower.getName() + " equals " + defendingPower.getName())
 
-        # find the ideal invading country - the invader must have more than 1 unit to attack
-        for invader in self.controlledTerritories:
-            if invader.getVulnerabilityRating() < lowestRating \
-                and not invader.isSafe and invader.getUnits() > 1:  # if the invader's vul rating is less than the lowest rating seen so far and the invader is next to a hostile country
-                lowestRating = invader.getVulnerabilityRating()
-                attacker = invader  # deep copy?
-
-        highestRating = 10
-        for territory in attacker.getHostileConnections():
-            if territory.getVulnerabilityRating() > highestRating:  # doing same thing here, trying to find hostile country w/ highest rating
-                defender = territory
-
-        # attack time
-        for attempts in range(attacker.getUnits()):
-            attack = dice.getNativeRoll('1d6')
-            defense = dice.getNativeRoll('1d6')
-            #print(attacker.getName() + ", controlled by " + attacker.getPower().getName() + ", is attacking " +
-                #defender.getName() + ", controlled by " + defender.getPower().getName())
-            if defense >= attack:
-                attacker.setUnits(attacker.getUnits() - 1)
-            elif attack > defense:
-                defender.setUnits(defender.getUnits() - 1)
-
-            if defender.getUnits() <= 0:
-                print(attacker.getPower().getName() + ' takes control of ' \
-                    + defender.getName() + ' from ' + defender.getPower().getName() \
-                    + '!')
-                defendingPower.setControlledTerritories(defendingPower.getTerritoriesNum() - 1)
-                defendingPower.removeTerritoryFromList(defender)
-
-                attackingPower.addNewTerritory(defender)
-                defender.setPower(attacker.getPower())
-                defender.setUnits(1)
-                break # breaking out of for loop because territory has been successfully captured
-            elif attacker.getUnits() == 1:
-                print (attacker.getPower().getName() \
-                    + ' cannot continue the attack from ' \
-                    + attacker.getName() + ', 1 army left')
-                break
-
-    # fortify the territory with the highest vulnerability rating
+        # attack time - simplified for the sake of processing time, but maybe we can increase the complexity without
+        # increasing the processing time in the future.
+        attackRoll = str(attacker.getUnits()) + "d6"
+        defenseRoll = str(defender.getUnits()) + "d6"
+        attack = dice.getNativeRoll(attackRoll)
+        defense = dice.getNativeRoll(defenseRoll)
+        print(attacker.getName() + ", controlled by " + attacker.getPower().getName() + ", is attacking " +
+            defender.getName() + ", controlled by " + defender.getPower().getName())
+        if defense >= attack:
+            if defense - attack <= 0:
+                attacker.setUnits(1)
+        elif attack > defense:
+            print(attacker.getPower().getName() + ' takes control of ' \
+            + defender.getName() + ' from ' + defender.getPower().getName() \
+            + '!')
+            defender.getPower().removeTerritoryFromList(defender)
+            defender.setUnits(1)
+            attacker.getPower().addNewTerritoryToList(defender)
+   
     # for use in fortify()
-
-    def moveArmies(amount, territory, otherTerritory):
+    def moveArmies(self, amount, territory, otherTerritory):
         if territory.isConnected(otherTerritory):
             territory.setUnits(territory.getUnits() - amount)
             otherTerritory.setUnits(otherTerritory.getUnits() + amount)
@@ -147,44 +150,13 @@ class Player:
                 + otherTerritory.getName() + ' arent connected, whoops')
 
     # find connection with highest number of armies and give a proportional amount
-
-
-    # find the territory with the lowest vul rating BUT borders at least one hostile territory.
-    #returns both the attacking territory and the territory that is going to be attacked.
-
-    def getFightingTerritories(self):
-        idealAttacker = TerritoryModule.Territory('placeholder', 1, [], self)
-        lowestVulRating = 1000
-        for territory in self.controlledTerritories:
-            if territory.getVulnerabilityRating() < lowestVulRating and not territory.isSafe():
-                lowestVulRating = territory.getVulnerabilityRating()
-                idealAttacker = territory  # deep copy?
-
-        defender = self.getMVT(idealAttacker.getHostileConnections())
-
-        return idealAttacker, defender
-                        
-
-    #TODO: Sometimes territoryList is empty, resulting in a placeholder territory being returned
-    def getMVT(self, territoryList): # Most Vulnerable Territory, for use in fortify and attack
-         mostVulnerable = TerritoryModule.Territory('placeholder', 1, [], self)
-         highestVulRating = -100
-         for territory in territoryList: # find most vulnerable territory
-            if territory.getVulnerabilityRating() > highestVulRating:
-                highestVulRating = territory.getVulnerabilityRating()
-                mostVulnerable = territory  # deep copy?
-        
-         return mostVulnerable
-
     def fortify(self):
         mostArmies = 1
-        donatingTerritory = TerritoryModule.Territory('placeholder', 1, [],
-                self) #TODO: what to do about placeholders (if anything lol)?
+        donatingTerritory = TerritoryModule.Territory('placeholder', 1, [], self)
+        mostVulnerable = self.getOverallMVT()
 
-        mostVulnerable = self.getMVT(self.controlledTerritories)
-
-        for connection in mostVulnerable.getConnections(): # find territory to donate
-            if mostVulnerable.isTerritoryFriendly(connection) and connection.getUnits >= mostArmies:
+        for connection in mostVulnerable.getConnections().values(): # find territory to donate
+            if mostVulnerable.isTerritoryFriendly(connection) and connection.getUnits() > mostArmies:
                 mostArmies = connection.getUnits()
                 donatingTerritory = connection # again, deep copy?
 
@@ -198,4 +170,3 @@ class Player:
             else:
                 self.moveArmies(1, donatingTerritory, mostVulnerable)
 
-        isOnTurn = False

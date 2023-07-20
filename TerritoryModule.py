@@ -5,12 +5,12 @@
 
 import copy
 
-connections = []
-
+connections = {}
 
 class Territory:
 
-    isGeneric = False
+    isGeneric = False # we may not need these flags, going to leave them in for now tho till we overhaul player AI
+    territoryIsSafe = True
 
     def __init__(self, name, units, connections, occupyingPower):
         import PlayerModule
@@ -23,32 +23,31 @@ class Territory:
         else:
             occupyingPower = PlayerModule.Player()
 
-    # returns num of (surrounding hostile units/friendly units)/10. A higher rating means the territory is in more danger of being taken
-    # on this turn.
-
+    # Returns whether or not the country is safe. A country is safe if all surrounding countries
+    # are controlled by the player in question. Higher rating = more vulnerable territory
     # TODO: See if adding friendly surrounding units to the equation produces a more comprehensive rating
-
+    def isSafe(self):
+        for territory in self.connections.values():
+            #print("isSafe connections for " + self.getName() + ": " + self.getConnectionListStr() + ". Checking " + territory.getName())
+            if territory.getPower() != self.getPower():
+                #print(self.getName() + " is not safe, because " + territory.getName() + " is owned by " + territory.getPower().getName())
+                self.territoryIsSafe = False  
+                return False
+        #print(self.getName() + " is safe!")
+        self.territoryIsSafe = True
+        return True
+    
+    # higher rating = more vulnerable
     def getVulnerabilityRating(self):
         if self.getUnits() == 0:
             self.setUnits(1)
 
         rating = 0
-        for territory in self.connections:
-            if territory.getPower != self.getPower():  # find countries played by hostile powers
+        for territory in self.connections.values():
+            if territory.getPower() != self.getPower():  # find countries played by hostile powers
                 rating += territory.getUnits()
         rating = rating / self.getUnits() / 10  # ratio of other players units vs this countries' units/10
         return rating
-
-    # Returns whether or not the country is safe. A country is safe if all surrounding countries are controlled by the player in question
-
-    def isSafe(self):
-        for territory in self.connections:
-            if territory.getPower() != self.getPower():
-                return False
-        return True
-
-    def getReinforcements(): #TODO: Do we still need this?
-        pass
 
     def getName(self):
         return self.name
@@ -62,15 +61,18 @@ class Territory:
     def getConnections(self):
         return self.connections
     
-    def changeConnection(self, index, newConnection):
-        self.connections[index] = newConnection
+    def getConnectionListStr(self):
+        connectionsStr = ", ".join([territory.getName() for territory in self.connections])
+        return connectionsStr
+    
+    def addConnection(self, connectionName, newConnection):
+        self.connections[connectionName] = newConnection
 
     def getHostileConnections(self):
-        global connections
-        hostileConnections = []
-        for territory in self.connections:
+        hostileConnections = {}
+        for territory in self.connections.values():
             if territory.getPower() != self.getPower():
-                hostileConnections.append(territory)
+               hostileConnections[territory.getName()] = territory
 
         return hostileConnections
 
@@ -81,13 +83,10 @@ class Territory:
         self.occupyingPower = newPower
 
     def isTerritoryFriendly(self, otherCountry):  # returns if this country is owned by the same player as the invoked one
-        return otherCountry.getPower == self.getPower
+        return otherCountry.getPower() == self.getPower()
 
     def isConnected(self, otherTerritory):
-        for territory in connections:
-            if territory.getName == self.getName():
-                return True
-        return False
-
-    def setNewPower():
-        pass
+        if otherTerritory in self.connections.values():
+            return True
+        else:
+            return False
