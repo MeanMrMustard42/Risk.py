@@ -9,7 +9,7 @@ connections = {}
 
 class Territory:
 
-    isGeneric = False # we may not need these flags, going to leave them in for now tho till we overhaul player AI
+    isDebugPlaceholder = False # we may not need these flags, going to leave them in for now tho till we overhaul player AI
     territoryIsSafe = True
 
     def __init__(self, name, units, connections, occupyingPower):
@@ -18,8 +18,8 @@ class Territory:
         self.units = units
         self.connections = connections
         self.occupyingPower = occupyingPower
-        if occupyingPower is None:  # if occupyingPower is null, don't try to make it a Player object
-            self.isGeneric = True
+        if self.name.find("placeholder") != -1:  # trigger placeholder flag
+            self.isDebugPlaceholder = True
         else:
             occupyingPower = PlayerModule.Player()
 
@@ -43,9 +43,9 @@ class Territory:
             self.setUnits(1)
 
         rating = 0
-        for territory in self.connections.values():
-            if territory.getPower() != self.getPower():  # find countries played by hostile powers
-                rating += territory.getUnits()
+        for territory in self.getHostileConnections().values():
+                if territory.getUnits() > 1: # territories with only 1 unit can't attack, so why should they be in the vul rating?
+                    rating += territory.getUnits()
         rating = rating / self.getUnits() / 10  # ratio of other players units vs this countries' units/10
         return rating
 
@@ -68,6 +68,7 @@ class Territory:
     def addConnection(self, connectionName, newConnection):
         self.connections[connectionName] = newConnection
 
+    # returns hashmap of territories connected to this territory that are controlled by different players
     def getHostileConnections(self):
         hostileConnections = {}
         for territory in self.connections.values():
@@ -81,8 +82,9 @@ class Territory:
 
     def setPower(self, newPower):
         self.occupyingPower = newPower
-
-    def isTerritoryFriendly(self, otherCountry):  # returns if this country is owned by the same player as the invoked one
+        
+    # returns if this country is owned by the same player as the invoked one
+    def isTerritoryFriendly(self, otherCountry): 
         return otherCountry.getPower() == self.getPower()
 
     def isConnected(self, otherTerritory):

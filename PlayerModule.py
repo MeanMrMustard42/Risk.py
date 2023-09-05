@@ -3,6 +3,7 @@
 
 import DiceRoller
 import TerritoryModule
+import random
 
 extraArmies = 0
 
@@ -15,7 +16,7 @@ class Player:
     f = open('game.txt', 'w')
     playerNumber = 0
 
-    def __init__(self, name = "bob"): # bob is placeholder
+    def __init__(self, name = "placeholder"):
         self.name = name
         self.controlledTerritories = {}
         self.numControlledTerritories = 0 
@@ -63,16 +64,50 @@ class Player:
         else:
             return False
 
-    def getFightingTerritories(self):
-        idealAttacker = TerritoryModule.Territory('placeholder', 1, [], self)
-        lowestVulRating = 1000
+    # Returns a hashmap of all territories this player controls that have at least one hostile connection.
+    # Helper method, for use in getFightingTerritories()
+    def getAllThreatenedTerritories(self):
+        allThreatenedTerritories = {}
         for territory in self.controlledTerritories.values():
-            if territory.getVulnerabilityRating() < lowestVulRating and not territory.isSafe() and territory.getUnits() > 1:
-                lowestVulRating = territory.getVulnerabilityRating()
-                idealAttacker = territory  # deep copy?
-                #print(idealAttacker.getName() + " has connections " + idealAttacker.getConnectionListStr())
+            if territory.isSafe() == False: # if territory borders at least one hostile territory
+                allThreatenedTerritories[territory.getName()] = territory
+            
+        return allThreatenedTerritories
 
-        defender = self.getMVT(idealAttacker.getHostileConnections())
+    def getFightingTerritories(self):
+        choosingRandomAttacker = False
+        RANDOM_ATTACKER_CHANCE = 65 #35 percent chance of picking a random attacker
+
+        # tracing where the placeholder territory comes from if it accidentally shows up when running a game
+        idealAttacker = TerritoryModule.Territory('placeholderGetFightingTerritories', 1, [], self)
+        lowestVulRating = 1000
+        randomAttackerRoll = dice.getNativeRoll("1d100")
+
+        if randomAttackerRoll >= RANDOM_ATTACKER_CHANCE:
+            choosingRandomAttacker = True
+            threatenedTerritories = self.getAllThreatenedTerritories()
+            threatenedTerritoryNames = list(threatenedTerritories.keys())
+            randomName = random.choice(threatenedTerritoryNames)
+            idealAttacker = threatenedTerritories[randomName]
+            
+        else:
+            for territory in self.getAllThreatenedTerritories().values():
+                threatened = self.getAllThreatenedTerritories()
+                if territory.getVulnerabilityRating() < lowestVulRating and territory.getUnits() > 1:
+                    lowestVulRating = territory.getVulnerabilityRating()
+                    idealAttacker = territory  # deep copy?
+
+        # if the ideal attacker has not changed at this point, that means the player cannot attack on this turn
+        # (all threatened territories have only 1 army).
+
+        # if there isn't any available attack actions on this turn, turn the defender into a placeholder as well and
+        # the logic in attack() will make sure the attack action gets skipped, otherwise perform operations as normal
+        if (idealAttacker.isDebugPlaceholder):
+            defender = TerritoryModule.Territory('placeholderDefenderGetFightingTerritories', 1, [], self)
+            print("Attack action from" + self.getName() + " skipped!")
+        else:
+            defender = self.getMVT(idealAttacker.getHostileConnections())
+
         return idealAttacker, defender
 
   # The overall most vulnerable territory that is currently controlled by this player
@@ -84,15 +119,18 @@ class Player:
             tempList = list(self.controlledTerritories.values())
             return tempList[0]
         else:
-            MVT = TerritoryModule.Territory('placeholder', 1, [], self)
+            MVT = TerritoryModule.Territory('placeholderGetOverallMVT', 1, [], self)
             highestRating = -100
             for territory in self.controlledTerritories.values():
                 if territory.getVulnerabilityRating() > highestRating:
                     MVT = territory # deep copy? maybe
                     return MVT
 
-    def getMVT(self, territoryList): # Most Vulnerable Territory, for use in fortify and attack
-         mostVulnerable = TerritoryModule.Territory('placeholder', 1, [], self)
+    # Most Vulnerable Territory, for use in fortify and attack
+    # Different from getOverallMVT() in that getMVT() will choose the most vulnerable territory from a
+    # given list while getOverallMVT() will choose it from all the territories the player controls.
+    def getMVT(self, territoryList):
+         mostVulnerable = TerritoryModule.Territory('placeholderGetMVT', 1, [], self)
          highestVulRating = -100
 
          for territory in territoryList.values(): # find most vulnerable territory
@@ -135,7 +173,7 @@ class Player:
         elif attack > defense:
             print(attacker.getPower().getName() + ' takes control of ' \
             + defender.getName() + ' from ' + defender.getPower().getName() \
-            + '!')
+            + ', via ' + attacker.getName())
             defender.getPower().removeTerritoryFromList(defender)
             defender.setUnits(1)
             attacker.getPower().addNewTerritoryToList(defender)
@@ -152,7 +190,7 @@ class Player:
     # find connection with highest number of armies and give a proportional amount
     def fortify(self):
         mostArmies = 1
-        donatingTerritory = TerritoryModule.Territory('placeholder', 1, [], self)
+        donatingTerritory = TerritoryModule.Territory('placeholderFortify', 1, [], self)
         mostVulnerable = self.getOverallMVT()
 
         for connection in mostVulnerable.getConnections().values(): # find territory to donate
